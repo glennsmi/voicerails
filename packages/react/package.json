@@ -1,0 +1,21 @@
+{
+  "name": "@voicerails/react",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "echo \"No lint configured for @voicerails/react\"",
+    "test": "echo \"No tests yet\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@voicerails/sdk": "workspace:*",
+    "react": "^19.1.1"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  }
+}

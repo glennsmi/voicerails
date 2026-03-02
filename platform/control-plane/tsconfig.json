@@ -1,0 +1,25 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "lib": [
+      "ES2022"
+    ],
+    "types": [
+      "node"
+    ]
+  },
+  "references": [
+    {
+      "path": "../../packages/connection-layer"
+    },
+    {
+      "path": "../workflow-engine"
+    }
+  ],
+  "include": [
+    "src/**/*.ts"
+  ]
+}

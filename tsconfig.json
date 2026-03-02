@@ -1,0 +1,29 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/connection-layer"
+    },
+    {
+      "path": "./packages/sdk"
+    },
+    {
+      "path": "./packages/node"
+    },
+    {
+      "path": "./packages/react"
+    },
+    {
+      "path": "./packages/cli"
+    },
+    {
+      "path": "./platform/control-plane"
+    },
+    {
+      "path": "./platform/telephony-bridge"
+    },
+    {
+      "path": "./platform/workflow-engine"
+    }
+  ]
+}

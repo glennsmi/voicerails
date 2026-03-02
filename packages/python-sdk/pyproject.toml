@@ -1,0 +1,10 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "voicerails"
+version = "0.1.0"
+description = "VoiceRails Python SDK"
+requires-python = ">=3.11"
+dependencies = ["requests>=2.32.3"]
