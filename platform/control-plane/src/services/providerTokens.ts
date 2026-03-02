@@ -37,7 +37,7 @@ export async function createProviderSessionToken(input: {
           tools: input.tools,
         }),
       });
-      const payload = await response.json();
+      const payload = (await response.json()) as any;
       const token = payload?.client_secret?.value;
       if (token) {
         return {
@@ -71,7 +71,7 @@ export async function createProviderSessionToken(input: {
           },
         }),
       });
-      const payload = await response.json();
+      const payload = (await response.json()) as any;
       if (payload?.name) {
         return {
           token: payload.name,

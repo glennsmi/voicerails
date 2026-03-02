@@ -11,14 +11,6 @@
       "node"
     ]
   },
-  "references": [
-    {
-      "path": "../../packages/connection-layer"
-    },
-    {
-      "path": "../workflow-engine"
-    }
-  ],
   "include": [
     "src/**/*.ts"
   ]

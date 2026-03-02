@@ -1,6 +1,15 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "declaration": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "composite": true,
     "rootDir": "src",
     "outDir": "dist",
@@ -8,11 +17,6 @@
       "node"
     ]
   },
-  "references": [
-    {
-      "path": "../../packages/connection-layer"
-    }
-  ],
   "include": [
     "src/**/*.ts"
   ]

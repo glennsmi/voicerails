@@ -27,13 +27,13 @@ export function useVoiceSession(options: UseVoiceSessionOptions) {
       const session = await client.sessions.create(options);
       const connection = await session.connect();
       connectionRef.current = connection;
-      connection.on("assistant_transcript", (event) => {
+      connection.on("assistant_transcript", (event: {streamKey: string; text: string; isFinal: boolean}) => {
         upsertEntry(event.streamKey, "assistant", event.text, !event.isFinal);
       });
-      connection.on("user_transcript", (event) => {
+      connection.on("user_transcript", (event: {streamKey: string; text: string; isFinal: boolean}) => {
         upsertEntry(event.streamKey, "user", event.text, !event.isFinal);
       });
-      connection.on("error", (event) => {
+      connection.on("error", (event: {message: string}) => {
         setError(event.message);
         setStatus("error");
       });

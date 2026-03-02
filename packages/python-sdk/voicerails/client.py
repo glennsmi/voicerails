@@ -9,7 +9,7 @@ import requests
 @dataclass
 class VoiceRails:
     api_key: str
-    base_url: str = "http://localhost:5001/voicerails8/europe-west2/api"
+    base_url: str = "http://localhost:5001/voicerails8/us-central1/api"
 
     def _headers(self) -> Dict[str, str]:
         return {

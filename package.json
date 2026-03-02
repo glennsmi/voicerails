@@ -7,12 +7,16 @@
     "platform/*"
   ],
   "scripts": {
-    "build": "npm run build --workspaces --if-present",
+    "build": "npm run build --workspace @voicerails/connection-layer && npm run build --workspace @voicerails/workflow-engine && npm run build --workspace @voicerails/sdk && npm run build --workspace @voicerails/node && npm run build --workspace @voicerails/react && npm run build --workspace voicerails-cli && npm run build --workspace @voicerails/control-plane && npm run build --workspace @voicerails/telephony-bridge && npm run build --workspace @voicerails/dashboard",
     "lint": "npm run lint --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "typecheck": "npm run typecheck --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspace @voicerails/connection-layer && npm run typecheck --workspace @voicerails/workflow-engine && npm run typecheck --workspace @voicerails/sdk && npm run typecheck --workspace @voicerails/node && npm run typecheck --workspace @voicerails/react && npm run typecheck --workspace voicerails-cli && npm run typecheck --workspace @voicerails/control-plane && npm run typecheck --workspace @voicerails/telephony-bridge && npm run typecheck --workspace @voicerails/dashboard",
     "dev:dashboard": "npm run dev --workspace @voicerails/dashboard",
-    "dev:control-plane": "npm run serve --workspace @voicerails/control-plane"
+    "dev:control-plane": "npm run serve --workspace @voicerails/control-plane",
+    "deploy:functions": "firebase deploy --only functions",
+    "deploy:hosting": "npm run build --workspace @voicerails/dashboard && firebase deploy --only hosting",
+    "deploy:bridge": "gcloud run deploy voicerails-telephony-bridge --source platform/telephony-bridge --project voicerails8 --region us-central1 --allow-unauthenticated --quiet",
+    "smoke:test": "./scripts/smoke-test.sh"
   },
   "engines": {
     "node": ">=20"

@@ -12,6 +12,6 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@voicerails/connection-layer": "workspace:*"
+    "@voicerails/connection-layer": "file:../connection-layer"
   }
 }

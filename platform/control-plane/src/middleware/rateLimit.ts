@@ -3,7 +3,7 @@ import type {NextFunction, Request, Response} from "express";
 const requestCounters = new Map<string, {count: number; resetAt: number}>();
 
 export function rateLimitMiddleware(req: Request, res: Response, next: NextFunction): void {
-  const key = req.header("authorization") ?? req.ip;
+  const key = req.header("authorization") ?? req.ip ?? "unknown";
   const now = Date.now();
   const current = requestCounters.get(key);
   const windowMs = 60_000;

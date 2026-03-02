@@ -13,7 +13,9 @@ export interface ProvisionedNumber {
   lifecycleStatus: string;
 }
 
-async function getTwilioClient(): Promise<Twilio | null> {
+type TwilioClient = ReturnType<typeof Twilio>;
+
+async function getTwilioClient(): Promise<TwilioClient | null> {
   const accountSid = (await getSecretValue("TWILIO_ACCOUNT_SID")) ?? process.env.TWILIO_ACCOUNT_SID;
   const authToken = (await getSecretValue("TWILIO_AUTH_TOKEN")) ?? process.env.TWILIO_AUTH_TOKEN;
   if (!accountSid || !authToken) {
@@ -45,7 +47,7 @@ export async function searchNumbers(input: {
     areaCode: input.areaCode ? Number(input.areaCode) : undefined,
     limit: 10,
   });
-  return numbers.map((number) => ({
+  return numbers.map((number: any) => ({
     id: `num_${number.phoneNumber}`,
     e164: number.phoneNumber,
     countryCode: input.country,

@@ -10,11 +10,6 @@
       "DOM"
     ]
   },
-  "references": [
-    {
-      "path": "../sdk"
-    }
-  ],
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx"

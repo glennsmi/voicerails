@@ -12,7 +12,7 @@ export async function getSecretValue(secretName: string): Promise<string | null>
   }
   const fullName = `projects/${projectId}/secrets/${secretName}/versions/latest`;
   try {
-    const [version] = await client.accessSecretVersion({name: fullName});
+    const [version] = await (client as any).accessSecretVersion({name: fullName});
     return version.payload?.data?.toString("utf8") ?? null;
   } catch {
     return null;

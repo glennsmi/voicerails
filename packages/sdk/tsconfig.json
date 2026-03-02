@@ -9,11 +9,6 @@
       "DOM"
     ]
   },
-  "references": [
-    {
-      "path": "../connection-layer"
-    }
-  ],
   "include": [
     "src/**/*.ts"
   ]

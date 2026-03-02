@@ -8,6 +8,12 @@ export interface VerifyWebhookSignatureInput {
   toleranceSeconds?: number;
 }
 
+export interface CreateWebhookSignatureInput {
+  payload: string | Buffer;
+  timestamp: string;
+  secret: string;
+}
+
 export function verifyWebhookSignature(input: VerifyWebhookSignatureInput): boolean {
   if (!input.signature || !input.timestamp) {
     return false;
@@ -24,4 +30,11 @@ export function verifyWebhookSignature(input: VerifyWebhookSignatureInput): bool
   const expected = Buffer.from(digest, "utf8");
   const actual = Buffer.from(input.signature, "utf8");
   return expected.length === actual.length && timingSafeEqual(expected, actual);
+}
+
+export function createWebhookSignature(input: CreateWebhookSignatureInput): string {
+  const payload = typeof input.payload === "string" ? input.payload : input.payload.toString("utf8");
+  return createHmac("sha256", input.secret)
+    .update(`${input.timestamp}.${payload}`)
+    .digest("hex");
 }

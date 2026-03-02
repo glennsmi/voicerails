@@ -33,4 +33,14 @@ export class WorkflowsApi {
   ): Promise<{ok: true}> {
     return this.http.post<{ok: true}>(`/v1/workflows/${workflowId}/deploy`, input);
   }
+
+  async execute(
+    workflowId: string,
+    input: {endUserId?: string; metadata?: Record<string, string>},
+  ): Promise<{ok: true; results: Array<Record<string, unknown>>}> {
+    return this.http.post<{ok: true; results: Array<Record<string, unknown>>}>(
+      `/v1/workflows/${workflowId}/execute`,
+      input,
+    );
+  }
 }

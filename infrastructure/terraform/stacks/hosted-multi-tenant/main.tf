@@ -8,7 +8,7 @@ variable "project_id" {
 
 variable "region" {
   type    = string
-  default = "europe-west2"
+  default = "us-central1"
 }
 
 output "project_id" {

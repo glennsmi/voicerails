@@ -1,4 +1,5 @@
 import type {WorkflowDefinition, WorkflowRuntimeContext, WorkflowStage} from "./types.js";
+import {stageHandlers} from "./stages.js";
 
 export interface WorkflowStepResult {
   stageId: string;
@@ -19,7 +20,7 @@ export class WorkflowInterpreter {
 
   async run(context: WorkflowRuntimeContext): Promise<WorkflowStepResult[]> {
     const results: WorkflowStepResult[] = [];
-    let current = this.definition.stages[0];
+    let current: WorkflowStage | undefined = this.definition.stages[0];
     while (current) {
       const step = await this.executeStage(current, context);
       results.push(step);
@@ -35,26 +36,17 @@ export class WorkflowInterpreter {
     stage: WorkflowStage,
     context: WorkflowRuntimeContext,
   ): Promise<WorkflowStepResult> {
-    switch (stage.type) {
-      case "greeting":
-      case "conversation":
-        return {stageId: stage.id, stageType: stage.type, done: false, nextStageId: stage.next};
-      case "extraction":
-        context.extractions[stage.id] = {
-          completionScore: 0,
-          fields: {},
-        };
-        return {stageId: stage.id, stageType: stage.type, done: false, nextStageId: stage.next};
-      case "memory_read":
-      case "memory_write":
-      case "action":
-      case "condition":
-      case "handoff":
-        return {stageId: stage.id, stageType: stage.type, done: false, nextStageId: stage.next};
-      case "end":
-        return {stageId: stage.id, stageType: stage.type, done: true};
-      default:
-        return {stageId: stage.id, stageType: "unknown", done: true};
+    const handler = stageHandlers[stage.type];
+    if (!handler) {
+      return {stageId: stage.id, stageType: "unknown", done: true};
     }
+    const result = await handler(stage, context);
+    return {
+      stageId: stage.id,
+      stageType: stage.type,
+      outputs: result.outputs,
+      done: result.done,
+      nextStageId: result.nextStageId,
+    };
   }
 }
