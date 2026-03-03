@@ -1,0 +1,36 @@
+[
+  {
+    "type": "conversation.item.input_audio_transcription.completed",
+    "transcript": "hello there",
+    "item_id": "u1",
+    "content_index": 0
+  },
+  {
+    "type": "response.output_audio.delta",
+    "delta": "AUDIO_1"
+  },
+  {
+    "type": "response.output_audio_transcript.delta",
+    "delta": "Hello",
+    "response_id": "r1"
+  },
+  {
+    "type": "response.output_audio_transcript.done",
+    "transcript": "Hello there",
+    "response_id": "r1"
+  },
+  {
+    "type": "response.output_audio_transcript.done",
+    "transcript": " hello   there ",
+    "response_id": "r2"
+  },
+  {
+    "type": "response.function_call_arguments.done",
+    "call_id": "call_2",
+    "name": "lookupPolicy",
+    "arguments": "{\"policyId\":\"abc\"}"
+  },
+  {
+    "type": "response.done"
+  }
+]

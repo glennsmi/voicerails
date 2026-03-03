@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BASE_URL="${VOICERAILS_API_BASE_URL:-https://us-central1-voicerails8.cloudfunctions.net/api}"
+BASE_URL="${VOICERAILS_API_BASE_URL:-https://europe-west2-voicerails8.cloudfunctions.net/api}"
 API_KEY="${VOICERAILS_API_KEY:-}"
 
 if [[ -z "${API_KEY}" ]]; then

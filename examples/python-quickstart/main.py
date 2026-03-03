@@ -7,7 +7,7 @@ if not api_key:
 
 client = VoiceRails(
     api_key=api_key,
-    base_url=os.environ.get("VOICERAILS_API_BASE_URL", "http://localhost:5001/voicerails8/us-central1/api"),
+    base_url=os.environ.get("VOICERAILS_API_BASE_URL", "http://localhost:5001/voicerails8/europe-west2/api"),
 )
 
 session = client.sessions.create(

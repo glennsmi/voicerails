@@ -143,7 +143,7 @@ export function App() {
   const [activeSection, setActiveSection] = useState<AppSection>("workflows");
 
   const [apiKey, setApiKey] = useState("");
-  const [baseUrl, setBaseUrl] = useState("https://us-central1-voicerails8.cloudfunctions.net/api");
+  const [baseUrl, setBaseUrl] = useState("https://europe-west2-voicerails8.cloudfunctions.net/api");
   const [workflowName, setWorkflowName] = useState("Dashboard Flow");
   const [selectedWorkflowId, setSelectedWorkflowId] = useState("");
   const [sessions, setSessions] = useState<unknown[]>([]);

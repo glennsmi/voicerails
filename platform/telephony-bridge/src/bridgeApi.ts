@@ -1,8 +1,9 @@
-type ToolDeclaration = {
-  name: string;
-  description: string;
-  parameters: Record<string, unknown>;
-};
+import {
+  VoiceConnectionClient,
+  resolveExperienceControls,
+  type ToolDeclaration,
+  type VoiceProvider,
+} from "@voicerails/connection-layer";
 
 type BridgeEventMap = {
   assistant_audio: (data: {audioBase64: string; sampleRate: number}) => void;
@@ -10,10 +11,12 @@ type BridgeEventMap = {
   assistant_transcript: (data: {text: string; streamKey: string; isFinal: boolean}) => void;
   tool_call: (data: {callId: string; name: string; args: Record<string, unknown>}) => void;
   error: (data: {code: string; message: string; recoverable: boolean}) => void;
+  disconnected: (data: {reason: string; intentional: boolean}) => void;
 };
 
 export interface BridgeConnection {
   sendAudio(base64Audio: string): void;
+  respondToToolCall(callId: string, output: string): void;
   disconnect(): void;
   on<E extends keyof BridgeEventMap>(event: E, handler: BridgeEventMap[E]): void;
 }
@@ -21,7 +24,7 @@ export interface BridgeConnection {
 export interface BridgeSessionConfig {
   id: string;
   token: string;
-  provider: "openai" | "gemini" | "elevenlabs" | "grok";
+  provider: VoiceProvider;
   model: string;
   voice: string;
   systemPrompt: string;
@@ -30,7 +33,7 @@ export interface BridgeSessionConfig {
 
 export async function fetchBridgeSessionConfig(payload: Record<string, unknown>): Promise<BridgeSessionConfig> {
   const baseUrl = process.env.VOICERAILS_API_BASE_URL ??
-    "http://localhost:5001/voicerails8/us-central1/api";
+    "http://localhost:5001/voicerails8/europe-west2/api";
   const apiKey = process.env.VOICERAILS_API_KEY ?? "vr_test_local";
   const response = await fetch(`${baseUrl}/v1/sessions`, {
     method: "POST",
@@ -56,7 +59,8 @@ export async function fetchBridgeSessionConfig(payload: Record<string, unknown>)
   return response.json() as Promise<BridgeSessionConfig>;
 }
 
-export async function createBridgeConnection(_config: BridgeSessionConfig): Promise<BridgeConnection> {
+export async function createBridgeConnection(config: BridgeSessionConfig): Promise<BridgeConnection> {
+  const connection = new VoiceConnectionClient();
   const listeners: Partial<Record<keyof BridgeEventMap, Array<Function>>> = {};
 
   function emit<E extends keyof BridgeEventMap>(event: E, payload: Parameters<BridgeEventMap[E]>[0]) {
@@ -65,23 +69,41 @@ export async function createBridgeConnection(_config: BridgeSessionConfig): Prom
     }
   }
 
-  // Self-contained mock bridge runtime for now; real provider sockets can be
-  // plugged in later without changing server lifecycle code.
+  connection.on("assistant_audio", (event) => emit("assistant_audio", event));
+  connection.on("user_transcript", (event) => emit("user_transcript", event));
+  connection.on("assistant_transcript", (event) => emit("assistant_transcript", event));
+  connection.on("tool_call", (event) => emit("tool_call", event));
+  connection.on("error", (event) => emit("error", event));
+  connection.on("disconnected", (event) => emit("disconnected", event));
+
+  await connection.connect({
+    provider: config.provider,
+    token: config.token,
+    model: config.model,
+    voice: config.voice,
+    systemPrompt: config.systemPrompt,
+    tools: config.tools,
+    experienceControls: resolveExperienceControls(),
+    audio: {
+      inputSampleRate: 8000,
+      outputSampleRate: 8000,
+      inputFormat: "g711_ulaw",
+      outputFormat: "g711_ulaw",
+    },
+  });
+
   return {
     sendAudio(base64Audio: string): void {
       if (!base64Audio) {
         return;
       }
-      // Optional echo mode for local diagnostics.
-      if (process.env.BRIDGE_ECHO_AUDIO === "true") {
-        emit("assistant_audio", {
-          audioBase64: base64Audio,
-          sampleRate: 8000,
-        });
-      }
+      connection.sendAudio(base64Audio);
+    },
+    respondToToolCall(callId: string, output: string): void {
+      connection.respondToToolCall(callId, output);
     },
     disconnect(): void {
-      // no-op in mock runtime
+      connection.disconnect();
     },
     on(event, handler): void {
       listeners[event] = listeners[event] ?? [];
@@ -95,7 +117,7 @@ export async function finalizeBridgeSession(input: {
   metadata: Record<string, unknown>;
 }): Promise<void> {
   const baseUrl = process.env.VOICERAILS_API_BASE_URL ??
-    "http://localhost:5001/voicerails8/us-central1/api";
+    "http://localhost:5001/voicerails8/europe-west2/api";
   const apiKey = process.env.VOICERAILS_API_KEY ?? "vr_test_local";
   const response = await fetch(`${baseUrl}/v1/sessions/${input.sessionId}/finalize`, {
     method: "POST",

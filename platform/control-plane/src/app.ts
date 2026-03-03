@@ -10,7 +10,7 @@ import {requireRole} from "./middleware/rbac.js";
 import {loggingMiddleware} from "./middleware/logging.js";
 import {rateLimitMiddleware} from "./middleware/rateLimit.js";
 import {FirestoreRepository} from "./repositories/firestoreRepository.js";
-import {createProviderSessionToken} from "./services/providerTokens.js";
+import {ProviderTokenError, createProviderSessionToken} from "./services/providerTokens.js";
 import {appendBillingEvent, syncUsageToStripe} from "./services/billing.js";
 import {provisionNumber, searchNumbers} from "./services/telephony.js";
 import {getSecretValue} from "./services/secretManager.js";
@@ -228,17 +228,39 @@ app.post("/v1/sessions", requireRole("developer"), async (req, res) => {
     return;
   }
   const input = parsed.data;
-  const providerToken = await createProviderSessionToken({
-    provider: input.provider,
-    model: input.model,
-    voice: input.voice,
-    systemPrompt: input.systemPrompt,
-    tools: input.tools,
-    audio: {
-      inputFormat: input.channel === "telephony" ? "g711_ulaw" : "pcm16",
-      outputFormat: input.channel === "telephony" ? "g711_ulaw" : "pcm16",
-    },
-  });
+  let providerToken: Awaited<ReturnType<typeof createProviderSessionToken>>;
+  try {
+    providerToken = await createProviderSessionToken({
+      provider: input.provider,
+      model: input.model,
+      voice: input.voice,
+      systemPrompt: input.systemPrompt,
+      tools: input.tools,
+      audio: {
+        inputFormat: input.channel === "telephony" ? "g711_ulaw" : "pcm16",
+        outputFormat: input.channel === "telephony" ? "g711_ulaw" : "pcm16",
+      },
+    });
+  } catch (error) {
+    if (error instanceof ProviderTokenError) {
+      res.status(error.status).json({
+        error: {
+          code: error.code,
+          message: error.message,
+          status: error.status,
+        },
+      });
+      return;
+    }
+    res.status(502).json({
+      error: {
+        code: "provider_session_failed",
+        message: (error as Error).message,
+        status: 502,
+      },
+    });
+    return;
+  }
 
   const session = await repo.createSession(req.tenant!, {
     status: "active",
@@ -877,6 +899,41 @@ app.get("/v1/analytics/usage", async (req, res) => {
   });
 });
 
+app.get("/v1/analytics/slo", async (req, res) => {
+  const sessions = await repo.listSessions(req.tenant!);
+  const calls = await repo.listCalls(req.tenant!);
+
+  const durationsMs = sessions
+    .filter((session) => Boolean(session.endedAt))
+    .map((session) => Math.max(0, new Date(session.endedAt!).valueOf() - new Date(session.startedAt).valueOf()))
+    .sort((a, b) => a - b);
+  const completedSessions = sessions.filter((session) => session.status === "completed").length;
+  const failedSessions = sessions.filter((session) => session.status === "failed").length;
+  const totalTerminalSessions = completedSessions + failedSessions;
+  const sessionSuccessRate = totalTerminalSessions > 0 ? completedSessions / totalTerminalSessions : 1;
+  const p95DurationMs = percentile(durationsMs, 0.95);
+
+  const successfulCalls = calls.filter((call) => call.status === "completed" || call.status === "ringing").length;
+  const callSuccessRate = calls.length > 0 ? successfulCalls / calls.length : 1;
+
+  res.json({
+    slo: {
+      sessionSuccessRate,
+      callSuccessRate,
+      p95SessionDurationMs: p95DurationMs,
+      sampleSizes: {
+        sessions: sessions.length,
+        calls: calls.length,
+      },
+    },
+    targets: {
+      sessionSuccessRate: 0.999,
+      callSuccessRate: 0.99,
+      p95SessionDurationMs: 180000,
+    },
+  });
+});
+
 app.get("/v1/analytics/providers", async (req, res) => {
   const billingSnapshot = await db
     .collection("billingEvents")
@@ -952,4 +1009,13 @@ async function emitWebhook(
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function percentile(values: number[], p: number): number {
+  if (!values.length) {
+    return 0;
+  }
+  const clamped = Math.max(0, Math.min(1, p));
+  const index = Math.min(values.length - 1, Math.max(0, Math.ceil(values.length * clamped) - 1));
+  return values[index];
 }

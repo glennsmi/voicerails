@@ -3,6 +3,7 @@ import {onRequest} from "firebase-functions/v2/https";
 import {onSchedule} from "firebase-functions/v2/scheduler";
 import {REGION} from "./config.js";
 import {app} from "./app.js";
+import {db} from "./firebase.js";
 import {syncUsageToStripe} from "./services/billing.js";
 
 setGlobalOptions({
@@ -26,11 +27,28 @@ export const billingSync = onSchedule(
     timeZone: "Etc/UTC",
   },
   async () => {
-    // Placeholder hourly sync job; pulls from BigQuery in later hardening iterations.
+    const stripeCustomerId = process.env.STRIPE_DEFAULT_CUSTOMER_ID ?? "";
+    if (!stripeCustomerId) {
+      return;
+    }
+
+    const oneHourAgoIso = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const eventsSnapshot = await db
+      .collection("billingEvents")
+      .where("timestamp", ">=", oneHourAgoIso)
+      .get();
+    const totalMinutes = eventsSnapshot.docs.reduce((sum, doc) => {
+      const data = doc.data();
+      return sum + Number(data.durationMs ?? 0) / 60000;
+    }, 0);
+    if (totalMinutes <= 0) {
+      return;
+    }
+
     await syncUsageToStripe({
-      stripeCustomerId: process.env.STRIPE_DEFAULT_CUSTOMER_ID ?? "",
+      stripeCustomerId,
       meterEventName: "voicerails.voice.minutes",
-      value: 0,
+      value: Math.ceil(totalMinutes),
     });
   },
 );

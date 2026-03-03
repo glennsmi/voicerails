@@ -2,7 +2,7 @@
 
 **Version:** 1.0  
 **Date:** 2026-03-01  
-**Status:** Draft — Architecture + implementation specification  
+**Status:** Implemented baseline — Phase 1-4 delivered  
 **Companion to:** `voice-infrastructure-prd-v2.md` (product requirements)  
 **Source material:** `voice-implementation-learnings.md` (raw learnings from Flank production)
 

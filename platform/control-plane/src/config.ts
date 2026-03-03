@@ -1,4 +1,4 @@
-export const REGION = "us-central1";
+export const REGION = "europe-west2";
 
 export const DEFAULT_TENANT = {
   orgId: process.env.VOICERAILS_DEFAULT_ORG_ID ?? "default-org",

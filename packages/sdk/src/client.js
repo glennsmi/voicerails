@@ -17,7 +17,7 @@ export class VoiceRails {
     constructor(options) {
         const baseUrl = options.baseUrl ??
             process.env.VOICERAILS_API_BASE_URL ??
-            "http://localhost:5001/voicerails8/us-central1/api";
+            "http://localhost:5001/voicerails8/europe-west2/api";
         const http = new HttpClient(baseUrl, options.apiKey);
         this.sessions = new SessionsApi(http);
         this.calls = new CallsApi(http);

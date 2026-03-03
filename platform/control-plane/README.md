@@ -1,6 +1,6 @@
 # VoiceRails Control Plane
 
-Firebase Functions v2 API deployed to `us-central1`.
+Firebase Functions v2 API deployed to `europe-west2`.
 
 ## Key Endpoints
 

@@ -33,7 +33,7 @@ async function main(): Promise<void> {
     }
     case "providers:list": {
       const response = await fetch(
-        `${process.env.VOICERAILS_API_BASE_URL ?? "http://localhost:5001/voicerails8/us-central1/api"}/v1/providers`,
+        `${process.env.VOICERAILS_API_BASE_URL ?? "http://localhost:5001/voicerails8/europe-west2/api"}/v1/providers`,
         {
           headers: {
             Authorization: `Bearer ${apiKey}`,

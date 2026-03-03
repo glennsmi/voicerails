@@ -15,8 +15,9 @@
     "dev:control-plane": "npm run serve --workspace @voicerails/control-plane",
     "deploy:functions": "firebase deploy --only functions",
     "deploy:hosting": "npm run build --workspace @voicerails/dashboard && firebase deploy --only hosting",
-    "deploy:bridge": "gcloud run deploy voicerails-telephony-bridge --source platform/telephony-bridge --project voicerails8 --region us-central1 --allow-unauthenticated --quiet",
-    "smoke:test": "./scripts/smoke-test.sh"
+    "deploy:bridge": "gcloud run deploy voicerails-telephony-bridge --source platform/telephony-bridge --project voicerails8 --region europe-west2 --allow-unauthenticated --quiet",
+    "smoke:test": "./scripts/smoke-test.sh",
+    "compat:providers": "npm run test --workspace @voicerails/connection-layer"
   },
   "engines": {
     "node": ">=20"

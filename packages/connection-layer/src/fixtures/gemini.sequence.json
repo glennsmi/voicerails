@@ -1,0 +1,53 @@
+[
+  {
+    "setupComplete": true
+  },
+  {
+    "serverContent": {
+      "inputTranscription": {
+        "text": "<tag>Hello [ctrl12] world\u0000"
+      }
+    }
+  },
+  {
+    "output_transcription": {
+      "text": "Assistant [ctrl2] reply"
+    }
+  },
+  {
+    "serverContent": {
+      "modelTurn": {
+        "parts": [
+          {
+            "inlineData": {
+              "data": "AUDIO_BASE64"
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "toolCall": {
+      "functionCalls": [
+        {
+          "id": "call_1",
+          "name": "lookupOrder",
+          "args": {
+            "orderId": "123"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "serverContent": {
+      "interrupted": true
+    }
+  },
+  {
+    "serverContent": {
+      "turnComplete": true
+    }
+  }
+]

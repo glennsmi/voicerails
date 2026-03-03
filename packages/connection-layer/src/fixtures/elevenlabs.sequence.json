@@ -1,0 +1,41 @@
+[
+  {
+    "type": "conversation.item.input_audio_transcription.delta",
+    "delta": "hello",
+    "item_id": "item_1",
+    "content_index": 0
+  },
+  {
+    "type": "conversation.item.input_audio_transcription.completed",
+    "transcript": "hello there",
+    "item_id": "item_1",
+    "content_index": 0
+  },
+  {
+    "type": "response.text.delta",
+    "delta": "Hi",
+    "response_id": "resp_1"
+  },
+  {
+    "type": "response.text.delta",
+    "delta": " there",
+    "response_id": "resp_1"
+  },
+  {
+    "type": "response.text.done",
+    "text": "Hi there",
+    "response_id": "resp_1"
+  },
+  {
+    "type": "response.output_item.done",
+    "item": {
+      "type": "function_call",
+      "call_id": "call_3",
+      "name": "lookupAccount",
+      "arguments": "{\"accountId\":\"acct_1\"}"
+    }
+  },
+  {
+    "type": "response.done"
+  }
+]
