@@ -40,7 +40,7 @@ export class HttpClient {
   private buildHeaders(): Record<string, string> {
     return {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${this.apiKey}`,
+      "x-api-key": this.apiKey,
     };
   }
 

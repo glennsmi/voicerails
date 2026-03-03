@@ -90,14 +90,14 @@ const API_BASE_STORAGE_KEY = "voicerails.dashboard.baseUrl";
 const THEME_STORAGE_KEY = "voicerails.dashboard.theme";
 
 const STAGE_OPTIONS: Array<{type: StageType; label: string; description: string; tone: string}> = [
-  {type: "greeting", label: "Greeting", description: "Welcome and establish context.", tone: "#22D3A7"},
-  {type: "conversation", label: "Conversation", description: "Collect intent and continue dialogue.", tone: "#3B82F6"},
-  {type: "extraction", label: "Extraction", description: "Capture structured fields from speech.", tone: "#EC4899"},
-  {type: "condition", label: "Condition", description: "Branch based on rules and memory state.", tone: "#F59E0B"},
-  {type: "action", label: "Action", description: "Trigger API, webhook, or external connector.", tone: "#A78BFA"},
-  {type: "memory", label: "Memory", description: "Read/write memory and profile context.", tone: "#22D3A7"},
-  {type: "handoff", label: "Handoff", description: "Transfer to human or fallback queue.", tone: "#FB7185"},
-  {type: "end", label: "End", description: "Graceful session completion.", tone: "#64748B"},
+  {type: "greeting", label: "Greeting", description: "Welcome and establish context.", tone: "#34D0AE"},
+  {type: "conversation", label: "Conversation", description: "Collect intent and continue dialogue.", tone: "#5C93F3"},
+  {type: "extraction", label: "Extraction", description: "Capture structured fields from speech.", tone: "#DE63A9"},
+  {type: "condition", label: "Condition", description: "Branch based on rules and memory state.", tone: "#D7A24B"},
+  {type: "action", label: "Action", description: "Trigger API, webhook, or external connector.", tone: "#A995F2"},
+  {type: "memory", label: "Memory", description: "Read/write memory and profile context.", tone: "#3DBFA4"},
+  {type: "handoff", label: "Handoff", description: "Transfer to human or fallback queue.", tone: "#E18295"},
+  {type: "end", label: "End", description: "Graceful session completion.", tone: "#8690A1"},
 ];
 
 const STAGE_OPTIONS_BY_TYPE = new Map(STAGE_OPTIONS.map((stage) => [stage.type, stage]));
@@ -598,6 +598,7 @@ export function App() {
                 nodes={nodes}
                 edges={edges}
                 nodeTypes={NODE_TYPES}
+                className="workflow-canvas"
                 fitView
                 snapToGrid
                 snapGrid={[16, 16]}
@@ -609,7 +610,7 @@ export function App() {
                 onNodeClick={(_event, node) => setSelectedNodeId(node.id)}
                 onPaneClick={() => setSelectedNodeId(null)}
               >
-                <Background gap={20} color="var(--border)" />
+                <Background gap={20} color="var(--canvas-grid)" />
                 <MiniMap pannable zoomable />
                 <Controls />
               </ReactFlow>
@@ -1048,7 +1049,7 @@ function WorkflowNode({data, selected}: NodeProps<StageNodeData>) {
   return (
     <div
       className={cn(
-        "min-w-[220px] rounded-xl border bg-[var(--bg-card)] px-4 py-3 text-left transition-colors",
+        "min-w-[220px] rounded-xl border bg-[var(--canvas-node-bg)] px-4 py-3 text-left transition-colors",
         selected ? "border-[var(--accent)]" : "border-[var(--border)] hover:border-[var(--border-bright)]",
       )}
       style={{boxShadow: selected ? "0 0 0 1px color-mix(in srgb, var(--accent) 65%, transparent)" : "none"}}
@@ -1101,10 +1102,10 @@ function createStageNode(
 function nodeStyleFor(stageType: StageType): React.CSSProperties {
   const tone = STAGE_OPTIONS_BY_TYPE.get(stageType)?.tone ?? "#22D3A7";
   return {
-    border: `1px solid color-mix(in srgb, ${tone} 40%, var(--border))`,
+    border: `1px solid color-mix(in srgb, ${tone} 45%, var(--border))`,
     borderLeftWidth: 4,
     borderRadius: 12,
-    background: "var(--bg-card)",
+    background: "var(--canvas-node-bg)",
   };
 }
 

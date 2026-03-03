@@ -10,23 +10,29 @@ if [[ -z "${API_KEY}" ]]; then
 fi
 
 echo "Checking health..."
-curl -sS "${BASE_URL}/health" | jq .
+curl -fsS "${BASE_URL}/health" | jq .
 
 echo "Creating session..."
-SESSION_ID="$(curl -sS -X POST "${BASE_URL}/v1/sessions" \
-  -H "Authorization: Bearer ${API_KEY}" \
+CREATE_PAYLOAD="$(curl -fsS -X POST "${BASE_URL}/v1/sessions" \
+  -H "x-api-key: ${API_KEY}" \
   -H "Content-Type: application/json" \
-  -d '{"provider":"openai","systemPrompt":"Smoke test prompt","channel":"in_app"}' | jq -r '.id')"
+  -d '{"provider":"openai","systemPrompt":"Smoke test prompt","channel":"in_app"}')"
+SESSION_ID="$(printf "%s" "${CREATE_PAYLOAD}" | jq -r '.id // empty')"
+if [[ -z "${SESSION_ID}" ]]; then
+  echo "Session creation did not return an id:"
+  printf "%s\n" "${CREATE_PAYLOAD}" | jq .
+  exit 1
+fi
 
 echo "Session ID: ${SESSION_ID}"
 echo "Finalizing session..."
-curl -sS -X POST "${BASE_URL}/v1/sessions/${SESSION_ID}/finalize" \
-  -H "Authorization: Bearer ${API_KEY}" \
+curl -fsS -X POST "${BASE_URL}/v1/sessions/${SESSION_ID}/finalize" \
+  -H "x-api-key: ${API_KEY}" \
   -H "Content-Type: application/json" \
   -d '{"transcript":[{"role":"user","text":"hello"},{"role":"assistant","text":"hi"}]}' | jq .
 
 echo "Listing analytics..."
-curl -sS "${BASE_URL}/v1/analytics/usage" \
-  -H "Authorization: Bearer ${API_KEY}" | jq .
+curl -fsS "${BASE_URL}/v1/analytics/usage" \
+  -H "x-api-key: ${API_KEY}" | jq .
 
 echo "Smoke test complete."

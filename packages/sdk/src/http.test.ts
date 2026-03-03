@@ -2,14 +2,14 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {HttpClient} from "./http.js";
 
-test("http client sends auth header and parses JSON response", async () => {
+test("http client sends API key header and parses JSON response", async () => {
   const originalFetch = globalThis.fetch;
   try {
     let capturedUrl = "";
-    let capturedAuth = "";
+    let capturedApiKey = "";
     globalThis.fetch = (async (input: string | URL, init?: RequestInit) => {
       capturedUrl = String(input);
-      capturedAuth = String((init?.headers as Record<string, string> | undefined)?.Authorization ?? "");
+      capturedApiKey = String((init?.headers as Record<string, string> | undefined)?.["x-api-key"] ?? "");
       return new Response(JSON.stringify({ok: true}), {
         status: 200,
         headers: {"Content-Type": "application/json"},
@@ -20,7 +20,7 @@ test("http client sends auth header and parses JSON response", async () => {
     const payload = await client.get<{ok: boolean}>("/health");
 
     assert.equal(capturedUrl, "https://api.example.com/health");
-    assert.equal(capturedAuth, "Bearer vr_test_123");
+    assert.equal(capturedApiKey, "vr_test_123");
     assert.deepEqual(payload, {ok: true});
   } finally {
     globalThis.fetch = originalFetch;

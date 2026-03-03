@@ -6,6 +6,12 @@
   --bg-elevated: #0d0f12;
   --bg-card: #111318;
   --bg-card-hover: #161921;
+  --canvas-bg: #181c23;
+  --canvas-grid: #2b323f;
+  --canvas-node-bg: #202632;
+  --canvas-controls-bg: #242a35;
+  --canvas-controls-bg-hover: #2e3643;
+  --canvas-controls-icon: #f3f6fb;
   --border: #1e2028;
   --border-bright: #2a2d38;
   --text-primary: #e8e9ed;
@@ -30,6 +36,12 @@ html[data-theme="light"] {
   --bg-elevated: #ffffff;
   --bg-card: #ffffff;
   --bg-card-hover: #f2f5fa;
+  --canvas-bg: #e6ebf2;
+  --canvas-grid: #c2ccd9;
+  --canvas-node-bg: #f5f8fc;
+  --canvas-controls-bg: #d6deea;
+  --canvas-controls-bg-hover: #c8d3e3;
+  --canvas-controls-icon: #1f2937;
   --border: #d9e1ec;
   --border-bright: #bcc9da;
   --text-primary: #0f172a;
@@ -81,4 +93,42 @@ body {
   border-radius: 999px;
   border: 2px solid var(--accent);
   background: var(--bg-elevated);
+}
+
+.workflow-canvas,
+.workflow-canvas .react-flow__pane,
+.workflow-canvas .react-flow__background {
+  background: var(--canvas-bg);
+}
+
+.workflow-canvas .react-flow__minimap {
+  background: color-mix(in srgb, var(--canvas-bg) 88%, #ffffff 12%);
+  border: 1px solid var(--border);
+}
+
+.workflow-canvas .react-flow__controls {
+  border: 1px solid var(--border-bright);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.workflow-canvas .react-flow__controls-button {
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--canvas-controls-bg);
+  color: var(--canvas-controls-icon);
+}
+
+.workflow-canvas .react-flow__controls-button:last-child {
+  border-bottom: 0;
+}
+
+.workflow-canvas .react-flow__controls-button:hover {
+  background: var(--canvas-controls-bg-hover);
+}
+
+.workflow-canvas .react-flow__controls-button svg {
+  fill: currentColor;
+  stroke: currentColor;
 }

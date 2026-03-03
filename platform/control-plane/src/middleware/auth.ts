@@ -10,18 +10,22 @@ declare module "express-serve-static-core" {
 
 export function authMiddleware(req: Request, res: Response, next: NextFunction): void {
   const authHeader = req.header("authorization");
-  if (!authHeader?.startsWith("Bearer ")) {
+  const bearerToken = authHeader?.startsWith("Bearer ")
+    ? authHeader.slice("Bearer ".length).trim()
+    : undefined;
+  const apiKeyHeader = req.header("x-api-key")?.trim();
+  const token = apiKeyHeader || bearerToken;
+  if (!token) {
     res.status(401).json({
       error: {
         code: "unauthenticated",
-        message: "Missing Authorization bearer token",
+        message: "Missing API key (use x-api-key or Authorization bearer token)",
         status: 401,
       },
     });
     return;
   }
 
-  const token = authHeader.slice("Bearer ".length).trim();
   if (!API_KEY_PREFIXES.some((prefix) => token.startsWith(prefix))) {
     res.status(403).json({
       error: {

@@ -36,7 +36,7 @@ async function main(): Promise<void> {
         `${process.env.VOICERAILS_API_BASE_URL ?? "http://localhost:5001/voicerails8/europe-west2/api"}/v1/providers`,
         {
           headers: {
-            Authorization: `Bearer ${apiKey}`,
+            "x-api-key": apiKey,
           },
         },
       );

@@ -39,7 +39,7 @@ export async function fetchBridgeSessionConfig(payload: Record<string, unknown>)
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
+      "x-api-key": apiKey,
     },
     body: JSON.stringify({
       provider: payload.provider ?? "openai",
@@ -123,7 +123,7 @@ export async function finalizeBridgeSession(input: {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
+      "x-api-key": apiKey,
     },
     body: JSON.stringify(input.metadata),
   });

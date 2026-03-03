@@ -37,7 +37,7 @@ export class HttpClient {
     buildHeaders() {
         return {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${this.apiKey}`,
+            "x-api-key": this.apiKey,
         };
     }
     async parse(response) {
